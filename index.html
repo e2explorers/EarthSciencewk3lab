@@ -1,503 +1,503 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Atmosphere Temperature Profile Lab</title>
 <style>
-  :root{
-    --bg:#081428; --panel:#101f36; --panel2:#132640; --text:#f7fafc;
-    --muted:#a7b4c8; --accent:#36b9f2; --ok:#63d08c; --warn:#f2c14e; --bad:#ff7b7b;
-    --grid:#31506d; --white:#fff;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:linear-gradient(180deg,#071222,#0c1a2d);color:var(--text);font-family:Inter,Arial,sans-serif}
-  .wrap{max-width:1200px;margin:auto;padding:20px}
-  h1{font-size:clamp(26px,4vw,42px);margin:0 0 6px}
-  h2{font-size:21px;margin:0 0 10px}
-  p{line-height:1.45}
-  .subtitle{color:var(--muted);margin-top:0}
-  .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
-  @media(max-width:900px){.grid{grid-template-columns:1fr}}
-  .card{background:rgba(16,31,54,.96);border:1px solid #27405e;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
-  .steps{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
-  .pill{border:1px solid #355777;color:var(--muted);padding:7px 10px;border-radius:999px;font-size:13px}
-  .pill.active{background:#14395a;color:white;border-color:var(--accent)}
-  .pill.done{background:#133725;color:#baf2ce;border-color:#2c7a4b}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{padding:7px 8px;border-bottom:1px solid #29415d;text-align:right}
-  th:first-child,td:first-child{text-align:left}
-  tr.current{background:#173857}
-  tr.plotted td{color:#9fe0b9}
-  .currentBox{background:#0b1728;border:1px solid #2a4b69;border-radius:12px;padding:12px;margin:12px 0}
-  .big{font-size:24px;font-weight:800;color:#fff}
-  .hint{font-size:13px;color:var(--muted)}
-  button{appearance:none;border:0;border-radius:10px;padding:10px 12px;font-weight:700;cursor:pointer}
-  button.primary{background:var(--accent);color:#052033}
-  button.secondary{background:#1d3550;color:white;border:1px solid #36597a}
-  button.good{background:#2b7547;color:white}
-  button:disabled{opacity:.45;cursor:not-allowed}
-  .btnrow{display:flex;gap:8px;flex-wrap:wrap}
-  .msg{min-height:24px;margin-top:9px;font-weight:700}
-  .msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)} .msg.warn{color:var(--warn)}
-  .chartCard{padding:12px;overflow:auto}
-  svg{width:100%;min-width:680px;height:auto;display:block;background:#fff;border-radius:12px}
-  .axisText{font-size:13px;fill:#203142}
-  .tickText{font-size:11px;fill:#405264}
-  .layerText{font-weight:800;font-size:14px;fill:#0b1d2f}
-  .plotPoint{fill:#e11d48;stroke:white;stroke-width:1.6}
-  .studentLine{fill:none;stroke:#e11d48;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-  .target{fill:transparent;cursor:crosshair}
-  .legend{font-size:12px;color:#65758a;padding:6px 2px 0}
-  .labelBank{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-  .drag{background:#173757;border:1px solid #3b6286;padding:8px 10px;border-radius:9px;cursor:grab;user-select:none}
-  .zone{border:2px dashed #496b89;background:#0d1a2b;border-radius:12px;padding:10px;margin:8px 0;min-height:48px}
-  .zone.goodzone{border-color:#3b9a61;background:#10291c}
-  .zoneTitle{font-size:13px;color:var(--muted)}
-  .small{font-size:12px;color:var(--muted)}
-  .hidden{display:none}
-  .footer{margin-top:14px;color:#8091aa;font-size:12px}
-  .nameRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  input[type="text"]{flex:1;min-width:200px;padding:10px 12px;border-radius:10px;border:1px solid #355777;background:#0d1a2b;color:white;font-size:15px}
-  .progressWrap{margin:10px 0}
-  .progressBar{height:10px;background:#0d1a2b;border:1px solid #2d4a67;border-radius:999px;overflow:hidden}
-  .progressFill{height:100%;width:0%;background:linear-gradient(90deg,#36b9f2,#63d08c);transition:width .25s ease}
-  .resultCard{background:white;color:#11263a;border-radius:16px;padding:24px;text-align:center}
-  .resultCard h2{font-size:28px;margin-bottom:8px}
-  .score{font-size:48px;font-weight:900;margin:12px 0;color:#183b5b}
-  .checklist{display:inline-block;text-align:left;margin:10px auto 18px}
-  .checkline{margin:7px 0}
-  .studentNameBig{font-size:22px;font-weight:800;margin-bottom:8px}
-  @media print{
-    body{background:white;color:black}
-    .noPrint,.leftcol{display:none!important}
-    .grid{display:block}
-    .card{border:none;box-shadow:none;background:white}
-    svg{min-width:0}
-    #completionScreen{display:block!important}
-    .resultCard{border:1px solid #ccc}
-  }
+:root{--bg:#071426;--panel:#10213a;--text:#f8fbff;--muted:#a9b9cc;--accent:#39bdf3;--ok:#68d391;--warn:#f6c85f;--line:#e11d48}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(#071426,#0b1b31);color:var(--text)}
+.wrap{max-width:1180px;margin:auto;padding:22px}
+h1{font-size:clamp(28px,4vw,44px);margin:0 0 6px}
+.subtitle{color:var(--muted);margin-top:0}
+.card{background:var(--panel);border:1px solid #294665;border-radius:16px;padding:16px;margin-bottom:16px}
+.overlay{position:fixed;inset:0;background:rgba(3,10,20,.88);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.overlay-card{width:min(680px,100%);background:#10213a;border:1px solid #35597b;border-radius:18px;padding:24px}
+.hidden{display:none!important}
+input,textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid #35597b;background:#0b1728;color:white;font-size:16px}
+button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+.primary{background:var(--accent);color:#062137}
+.secondary{background:#1e3956;color:white;border:1px solid #436789}
+.good{background:#2f7a4c;color:white}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+.pill{padding:7px 10px;border-radius:999px;border:1px solid #3a5d7c;color:var(--muted);font-size:13px}
+.pill.active{background:#154166;color:white;border-color:var(--accent)}
+.pill.done{background:#143922;color:#c8f7d7;border-color:#317a4c}
+.progress{height:10px;border:1px solid #35597b;background:#0a1728;border-radius:999px;overflow:hidden}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,#39bdf3,#68d391);transition:.2s}
+.small{font-size:12px;color:var(--muted)}
+.big{font-size:22px;font-weight:800}
+.notice{min-height:24px;margin-top:8px;font-weight:700}
+.ok{color:var(--ok)} .warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px;border-bottom:1px solid #294665;text-align:right}
+th:first-child,td:first-child{text-align:left}
+tr.current{background:#173958}
+tr.plotted td{color:#aaf0c0}
+.chart{overflow:auto}
+svg{width:100%;min-width:680px;height:auto;background:white;border-radius:12px;display:block}
+.tick{font-size:11px;fill:#405264}.axis{font-size:13px;fill:#203142}.layer{font-size:14px;font-weight:800;fill:#0d2236}
+.point{fill:var(--line);stroke:#fff;stroke-width:1.5}.profile{fill:none;stroke:var(--line);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.hit{fill:transparent;cursor:crosshair}
+.bank{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.drag{background:#173958;border:1px solid #416b90;padding:8px 10px;border-radius:9px;cursor:grab}
+.zone{border:2px dashed #4d708f;border-radius:12px;padding:10px;margin:8px 0;min-height:48px;background:#0c192b}
+.zone.goodzone{border-color:#3f9b65;background:#112b1c}
+.result{background:white;color:#13283c;border-radius:16px;padding:24px;text-align:center}
+.score{font-size:50px;font-weight:900;color:#173b5b;margin:10px}
+.checks{display:inline-block;text-align:left}
+@media print{
+  body{background:white;color:black}
+  .no-print,.sidebar{display:none!important}
+  .grid{display:block}
+  .card{background:white;border:none}
+  svg{min-width:0}
+}
 </style>
 </head>
 <body>
+
+<div id="nameOverlay" class="overlay">
+  <div class="overlay-card">
+    <h2 style="margin-top:0">🌎 Atmosphere Temperature Profile Lab</h2>
+    <p class="small">Enter your full name to begin. Your work stays in this browser until you refresh the page.</p>
+    <input id="studentName" type="text" placeholder="Student full name" autocomplete="name">
+    <div class="row" style="margin-top:12px">
+      <button id="beginBtn" class="primary" type="button">Begin Lab</button>
+    </div>
+    <div id="nameMsg" class="notice"></div>
+  </div>
+</div>
+
 <div class="wrap">
   <h1>🌎 Atmosphere Temperature Profile Lab</h1>
-  <p class="subtitle">Plot the worksheet data yourself, connect adjacent points, then label the atmospheric layers and ozone layer.</p>
+  <p class="subtitle">Plot the worksheet data, connect adjacent points, label the atmospheric layers, and mark the ozone layer.</p>
 
-  <div class="card noPrint" id="nameCard">
-    <h2>Student Information</h2>
-    <div class="nameRow">
-      <input id="studentName" type="text" placeholder="Enter your full name" />
-      <button type="button" class="primary" id="beginBtn" onclick="beginLab()">Begin Lab</button>
-    </div>
-    <div class="msg" id="nameMsg"></div>
+  <div class="steps no-print">
+    <div id="s1" class="pill active">1. Plot data</div>
+    <div id="s2" class="pill">2. Label layers</div>
+    <div id="s3" class="pill">3. Mark ozone</div>
+    <div id="s4" class="pill">4. Show My Work</div>
   </div>
 
-  <div id="labArea" class="hidden">
-    <div class="steps noPrint">
-      <div class="pill active" id="p1">1. Plot data</div>
-      <div class="pill" id="p2">2. Label layers</div>
-      <div class="pill" id="p3">3. Mark ozone</div>
-      <div class="pill" id="p4">4. Show My Work</div>
-    </div>
-
-    <div class="progressWrap noPrint">
-      <div class="small" id="progressText">Progress: 0%</div>
-      <div class="progressBar"><div id="progressFill" class="progressFill"></div></div>
-    </div>
-
-    <div class="grid">
-      <div class="leftcol">
-        <div class="card" id="plotPanel">
-          <h2>Step 1 — Plot the data</h2>
-          <p class="small">Use the table. For each row, click the graph where the <b>temperature</b> and <b>altitude</b> meet. Adjacent accepted points will connect automatically.</p>
-
-          <div class="currentBox">
-            <div class="hint">Plot this point:</div>
-            <div class="big" id="currentPair">Altitude 0 km • Temperature 15 °C</div>
-            <div class="hint">X-axis = Temperature • Y-axis = Altitude</div>
-          </div>
-
-          <div class="btnrow">
-            <button class="secondary" id="undoBtn">Undo last point</button>
-            <button class="secondary" id="resetBtn">Reset lab</button>
-          </div>
-          <div class="msg" id="msg"></div>
-
-          <div style="max-height:430px;overflow:auto;margin-top:10px">
-            <table id="dataTable">
-              <thead><tr><th>Altitude (km)</th><th>Temp (°C)</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="card hidden" id="labelPanel">
-          <h2>Step 2 — Label the layers</h2>
-          <p class="small">Drag each label into the correct altitude band. The graph only extends to 100 km, so you are labeling the four temperature-defined layers shown by this profile.</p>
-          <div class="labelBank" id="labelBank"></div>
-          <div id="zones"></div>
-          <button class="primary" id="checkLabels">Check layer labels</button>
-          <div class="msg" id="labelMsg"></div>
-        </div>
-
-        <div class="card hidden" id="ozonePanel">
-          <h2>Step 3 — Mark the ozone layer</h2>
-          <p class="small">Click the graph at the <b>general altitude</b> where the ozone layer is concentrated. You do not need an exact number.</p>
-          <div class="msg" id="ozoneMsg"></div>
-        </div>
-
-        <div class="card hidden" id="reviewPanel">
-          <h2>Step 4 — Review</h2>
-          <p><b>Look at your completed profile.</b> Where does temperature stop decreasing and start increasing? Where does it reverse again?</p>
-          <p class="small">Those changes in temperature trend are part of how the major thermal layers of the atmosphere are identified.</p>
-          <textarea id="reflection" rows="5" style="width:100%;padding:10px;border-radius:10px;border:1px solid #355777;background:#0d1a2b;color:white" placeholder="Write 1–3 sentences explaining what you notice about how temperature changes through the atmospheric layers."></textarea>
-          <div class="btnrow" style="margin-top:10px">
-            <button class="good" id="submitBtn">Submit / Show My Work</button>
-            <button class="secondary" id="startOverBtn">Start over</button>
-          </div>
-          <div class="msg" id="reviewMsg"></div>
-        </div>
-      </div>
-
-      <div class="card chartCard">
-        <svg id="chart" viewBox="0 0 760 800" aria-label="Atmospheric temperature profile graph">
-          <rect x="0" y="0" width="760" height="800" fill="white"/>
-          <text x="380" y="34" text-anchor="middle" font-size="20" font-weight="800" fill="#0b1d2f">Average Temperature Profile of Earth's Atmosphere</text>
-          <g id="layerBands"></g>
-          <g id="gridLines"></g>
-          <g id="axes"></g>
-          <polyline id="studentLine" class="studentLine" points=""></polyline>
-          <g id="points"></g>
-          <g id="ozoneMark"></g>
-          <rect id="clickTarget" class="target" x="80" y="65" width="620" height="660"></rect>
-        </svg>
-        <div class="legend">Tip: negative temperatures are left of 0 °C. Altitude increases upward.</div>
-      </div>
-    </div>
+  <div class="no-print" style="margin-bottom:14px">
+    <div id="progressText" class="small">Progress: 0%</div>
+    <div class="progress"><div id="progressFill"></div></div>
   </div>
 
-  <div id="completionScreen" class="card hidden">
-    <div class="resultCard">
+  <div id="mainGrid" class="grid">
+    <div class="sidebar">
+      <section id="plotPanel" class="card">
+        <h2>Step 1 — Plot the data</h2>
+        <p class="small">Plot one row at a time. The x-axis is temperature and the y-axis is altitude.</p>
+        <div class="card" style="background:#0b1728">
+          <div class="small">Plot this point:</div>
+          <div id="currentPair" class="big">Altitude 0 km • Temperature 15 °C</div>
+        </div>
+        <div class="row">
+          <button id="undoBtn" class="secondary" type="button">Undo</button>
+          <button id="resetBtn" class="secondary" type="button">Reset Lab</button>
+        </div>
+        <div id="plotMsg" class="notice"></div>
+        <div style="max-height:420px;overflow:auto">
+          <table>
+            <thead><tr><th>Altitude (km)</th><th>Temp (°C)</th></tr></thead>
+            <tbody id="dataBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="labelPanel" class="card hidden">
+        <h2>Step 2 — Label the layers</h2>
+        <p class="small">Drag each layer into the correct altitude band.</p>
+        <div id="labelBank" class="bank"></div>
+        <div id="zones"></div>
+        <button id="checkLabelsBtn" class="primary" type="button">Check Labels</button>
+        <div id="labelMsg" class="notice"></div>
+      </section>
+
+      <section id="ozonePanel" class="card hidden">
+        <h2>Step 3 — Mark the ozone layer</h2>
+        <p class="small">Click the graph at the general altitude where the ozone layer is concentrated.</p>
+        <div id="ozoneMsg" class="notice"></div>
+      </section>
+
+      <section id="reviewPanel" class="card hidden">
+        <h2>Step 4 — Review</h2>
+        <p>What do you notice about how temperature changes as altitude increases?</p>
+        <textarea id="reflection" rows="5" placeholder="Write 1–3 complete sentences."></textarea>
+        <div class="row" style="margin-top:10px">
+          <button id="submitBtn" class="good" type="button">Submit / Show My Work</button>
+          <button id="restartBtn" class="secondary" type="button">Start Over</button>
+        </div>
+        <div id="reviewMsg" class="notice"></div>
+      </section>
+    </div>
+
+    <section class="card chart">
+      <svg id="chart" viewBox="0 0 760 800" aria-label="Average temperature profile of Earth's atmosphere">
+        <rect x="0" y="0" width="760" height="800" fill="#fff"/>
+        <text x="380" y="34" text-anchor="middle" font-size="20" font-weight="800" fill="#0b1d2f">Average Temperature Profile of Earth's Atmosphere</text>
+        <g id="bands"></g>
+        <g id="gridLines"></g>
+        <g id="axes"></g>
+        <polyline id="profileLine" class="profile" points=""></polyline>
+        <g id="points"></g>
+        <g id="ozoneMark"></g>
+        <rect id="hitArea" class="hit" x="80" y="65" width="620" height="660"></rect>
+      </svg>
+      <div class="small">Tip: negative temperatures are left of 0 °C. Altitude increases upward.</div>
+    </section>
+  </div>
+
+  <section id="resultScreen" class="card hidden">
+    <div class="result">
       <h2>✅ Atmosphere Lab Complete</h2>
-      <div class="studentNameBig" id="resultName"></div>
-      <div class="score" id="resultScore">100%</div>
-      <div class="checklist">
-        <div class="checkline" id="c1">✅ 22/22 data points plotted</div>
-        <div class="checkline" id="c2">✅ Atmospheric layers labeled</div>
-        <div class="checkline" id="c3">✅ Ozone layer identified</div>
-        <div class="checkline" id="c4">✅ Reflection completed</div>
+      <div id="resultName" style="font-size:22px;font-weight:800"></div>
+      <div id="resultScore" class="score">100%</div>
+      <div class="checks">
+        <p id="check1"></p>
+        <p id="check2"></p>
+        <p id="check3"></p>
+        <p id="check4"></p>
       </div>
-      <p id="resultMessage"><b>Great work!</b> Your atmosphere temperature profile is complete.</p>
+      <p id="resultMessage"></p>
       <p class="small">Take a screenshot of this screen or use Print / Save as PDF to submit your work.</p>
-      <div class="btnrow noPrint" style="justify-content:center">
-        <button class="good" onclick="window.print()">Print / Save as PDF</button>
-        <button class="secondary" id="backToLabBtn">Return to Lab</button>
+      <div class="row no-print" style="justify-content:center">
+        <button id="printBtn" class="good" type="button">Print / Save as PDF</button>
+        <button id="returnBtn" class="secondary" type="button">Return to Lab</button>
       </div>
     </div>
-  </div>
-
-  <div class="footer">Built from the temperature/altitude data on your Week 3 atmosphere worksheet.</div>
+  </section>
 </div>
 
 <script>
-const data = [
- [0,15],[5,-18],[10,-49],[12,-56],[20,-56],[25,-51],[30,-46],[35,-37],
- [40,-22],[45,-8],[48,-2],[52,-2],[55,-7],[60,-17],[65,-33],[70,-54],
- [75,-65],[80,-79],[84,-86],[92,-86],[95,-81],[100,-72]
+(function(){
+"use strict";
+
+const DATA = [
+  [0,15],[5,-18],[10,-49],[12,-56],[20,-56],[25,-51],[30,-46],[35,-37],
+  [40,-22],[45,-8],[48,-2],[52,-2],[55,-7],[60,-17],[65,-33],[70,-54],
+  [75,-65],[80,-79],[84,-86],[92,-86],[95,-81],[100,-72]
+];
+
+const LAYERS = [
+  {name:"Troposphere",min:0,max:12},
+  {name:"Stratosphere",min:12,max:50},
+  {name:"Mesosphere",min:50,max:85},
+  {name:"Thermosphere",min:85,max:100}
 ];
 
 const xmin=-100, xmax=20, ymin=0, ymax=100;
 const left=80, right=700, top=65, bottom=725;
-const W=right-left, H=bottom-top;
-const xMap = t => left + (t-xmin)/(xmax-xmin)*W;
-const yMap = a => bottom - (a-ymin)/(ymax-ymin)*H;
+const width=right-left, height=bottom-top;
+const xMap = t => left + (t-xmin)/(xmax-xmin)*width;
+const yMap = a => bottom - (a-ymin)/(ymax-ymin)*height;
 
-const svg = document.getElementById('chart');
-const grid = document.getElementById('gridLines');
-const axes = document.getElementById('axes');
-const ptG = document.getElementById('points');
-const line = document.getElementById('studentLine');
-const clickTarget = document.getElementById('clickTarget');
-const tbody = document.querySelector('#dataTable tbody');
-const msg = document.getElementById('msg');
-let plotted = [];
-let step = 1;
-let ozonePlaced = false;
-let labelsCorrect = false;
-let studentName = "";
+let studentName="";
+let plotted=[];
+let currentStep=1;
+let labelsCorrect=false;
+let ozonePlaced=false;
 
-for(let t=-100;t<=20;t+=10){
-  const x=xMap(t);
-  grid.insertAdjacentHTML('beforeend', `<line x1="${x}" y1="${top}" x2="${x}" y2="${bottom}" stroke="#d9e1e8" stroke-width="1"/>`);
-  axes.insertAdjacentHTML('beforeend', `<text x="${x}" y="${bottom+22}" text-anchor="middle" class="tickText">${t}</text>`);
+const $ = id => document.getElementById(id);
+
+function init(){
+  drawAxes();
+  renderTable();
+  buildLayerTask();
+  bindEvents();
+  updateProgress();
 }
-for(let a=0;a<=100;a+=10){
-  const y=yMap(a);
-  grid.insertAdjacentHTML('beforeend', `<line x1="${left}" y1="${y}" x2="${right}" y2="${y}" stroke="#d9e1e8" stroke-width="1"/>`);
-  axes.insertAdjacentHTML('beforeend', `<text x="${left-10}" y="${y+4}" text-anchor="end" class="tickText">${a}</text>`);
+
+function bindEvents(){
+  $("beginBtn").addEventListener("click", beginLab);
+  $("studentName").addEventListener("keydown", e => { if(e.key==="Enter") beginLab(); });
+  $("undoBtn").addEventListener("click", undoPoint);
+  $("resetBtn").addEventListener("click", resetLab);
+  $("restartBtn").addEventListener("click", resetLab);
+  $("checkLabelsBtn").addEventListener("click", checkLabels);
+  $("reflection").addEventListener("input", updateProgress);
+  $("submitBtn").addEventListener("click", submitWork);
+  $("returnBtn").addEventListener("click", returnToLab);
+  $("printBtn").addEventListener("click", () => window.print());
+  $("hitArea").addEventListener("click", handleGraphClick);
 }
-axes.insertAdjacentHTML('beforeend', `<line x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" stroke="#1f3347" stroke-width="2"/>`);
-axes.insertAdjacentHTML('beforeend', `<line x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" stroke="#1f3347" stroke-width="2"/>`);
-axes.insertAdjacentHTML('beforeend', `<text x="${(left+right)/2}" y="775" text-anchor="middle" class="axisText">Temperature (°C)</text>`);
-axes.insertAdjacentHTML('beforeend', `<text x="20" y="${(top+bottom)/2}" text-anchor="middle" transform="rotate(-90 20 ${(top+bottom)/2})" class="axisText">Altitude (km)</text>`);
 
 function beginLab(){
-  const nameInput = document.getElementById('studentName');
-  const nameMsg = document.getElementById('nameMsg');
-  const nameCard = document.getElementById('nameCard');
-  const labArea = document.getElementById('labArea');
-
-  const v = (nameInput && nameInput.value ? nameInput.value : '').trim();
-
-  if(!v){
-    if(nameMsg){
-      nameMsg.textContent = 'Please enter your name before beginning.';
-      nameMsg.className = 'msg warn';
-    }
+  const value=$("studentName").value.trim();
+  if(!value){
+    $("nameMsg").textContent="Please enter your full name.";
+    $("nameMsg").className="notice warn";
     return;
   }
-
-  studentName = v;
-
-  if(nameCard) nameCard.style.display = 'none';
-  if(labArea){
-    labArea.classList.remove('hidden');
-    labArea.style.display = 'block';
-  }
-
-  renderTable();
-  updateProgress();
-  window.scrollTo({top:0, behavior:'smooth'});
+  studentName=value;
+  $("nameOverlay").classList.add("hidden");
+  window.scrollTo(0,0);
 }
-window.beginLab = beginLab;
+
+function drawAxes(){
+  const grid=$("gridLines");
+  const axes=$("axes");
+  let g="", a="";
+  for(let t=-100;t<=20;t+=10){
+    const x=xMap(t);
+    g += `<line x1="${x}" y1="${top}" x2="${x}" y2="${bottom}" stroke="#d9e1e8" stroke-width="1"/>`;
+    a += `<text x="${x}" y="${bottom+22}" text-anchor="middle" class="tick">${t}</text>`;
+  }
+  for(let alt=0;alt<=100;alt+=10){
+    const y=yMap(alt);
+    g += `<line x1="${left}" y1="${y}" x2="${right}" y2="${y}" stroke="#d9e1e8" stroke-width="1"/>`;
+    a += `<text x="${left-10}" y="${y+4}" text-anchor="end" class="tick">${alt}</text>`;
+  }
+  a += `<line x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" stroke="#1f3347" stroke-width="2"/>`;
+  a += `<line x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" stroke="#1f3347" stroke-width="2"/>`;
+  a += `<text x="${(left+right)/2}" y="775" text-anchor="middle" class="axis">Temperature (°C)</text>`;
+  a += `<text x="20" y="${(top+bottom)/2}" text-anchor="middle" transform="rotate(-90 20 ${(top+bottom)/2})" class="axis">Altitude (km)</text>`;
+  grid.innerHTML=g;
+  axes.innerHTML=a;
+}
 
 function renderTable(){
-  tbody.innerHTML='';
-  data.forEach((d,i)=>{
-    const tr=document.createElement('tr');
-    if(i===plotted.length && step===1) tr.className='current';
-    if(i<plotted.length) tr.className='plotted';
+  const body=$("dataBody");
+  body.innerHTML="";
+  DATA.forEach((d,i)=>{
+    const tr=document.createElement("tr");
+    if(i===plotted.length && currentStep===1) tr.className="current";
+    if(i<plotted.length) tr.className="plotted";
     tr.innerHTML=`<td>${d[0]}</td><td>${d[1]}</td>`;
-    tbody.appendChild(tr);
+    body.appendChild(tr);
   });
-  if(plotted.length<data.length){
-    const d=data[plotted.length];
-    document.getElementById('currentPair').textContent=`Altitude ${d[0]} km • Temperature ${d[1]} °C`;
-  } else {
-    document.getElementById('currentPair').textContent='All data points plotted!';
+  if(plotted.length<DATA.length){
+    const d=DATA[plotted.length];
+    $("currentPair").textContent=`Altitude ${d[0]} km • Temperature ${d[1]} °C`;
+  }else{
+    $("currentPair").textContent="All 22 points plotted!";
   }
 }
-renderTable();
 
-function setMsg(text, cls=''){
-  msg.textContent=text; msg.className='msg '+cls;
-}
-
-function plotSVG(){
-  ptG.innerHTML='';
-  plotted.forEach((p,i)=>{
-    ptG.insertAdjacentHTML('beforeend', `<circle class="plotPoint" cx="${xMap(p[1])}" cy="${yMap(p[0])}" r="5"><title>${p[0]} km, ${p[1]} °C</title></circle>`);
-  });
-  line.setAttribute('points', plotted.map(p=>`${xMap(p[1])},${yMap(p[0])}`).join(' '));
+function renderProfile(){
+  $("points").innerHTML=plotted.map(p =>
+    `<circle class="point" cx="${xMap(p[1])}" cy="${yMap(p[0])}" r="5"></circle>`
+  ).join("");
+  $("profileLine").setAttribute("points", plotted.map(p=>`${xMap(p[1])},${yMap(p[0])}`).join(" "));
 }
 
 function graphCoords(evt){
-  const rect=svg.getBoundingClientRect();
+  const rect=$("chart").getBoundingClientRect();
   const sx=760/rect.width, sy=800/rect.height;
-  const x=(evt.clientX-rect.left)*sx, y=(evt.clientY-rect.top)*sy;
-  const temp=xmin + (x-left)/W*(xmax-xmin);
-  const alt=ymin + (bottom-y)/H*(ymax-ymin);
-  return {x,y,temp,alt};
+  const px=(evt.clientX-rect.left)*sx;
+  const py=(evt.clientY-rect.top)*sy;
+  return {
+    temp:xmin + (px-left)/width*(xmax-xmin),
+    alt:ymin + (bottom-py)/height*(ymax-ymin)
+  };
 }
 
-function updateProgress(){
-  let pct = 0;
-  pct += (plotted.length / data.length) * 60;
-  if(labelsCorrect) pct += 20;
-  if(ozonePlaced) pct += 10;
-  if(document.getElementById('reflection').value.trim().length >= 20) pct += 10;
-  pct = Math.round(pct);
-  document.getElementById('progressText').textContent = `Progress: ${pct}%`;
-  document.getElementById('progressFill').style.width = pct + '%';
+function handleGraphClick(evt){
+  if(currentStep===1) plotPoint(evt);
+  else if(currentStep===3) placeOzone(evt);
 }
 
-clickTarget.addEventListener('click', e=>{
-  if(step===1){
-    if(plotted.length>=data.length) return;
-    const c=graphCoords(e);
-    const [alt,temp]=data[plotted.length];
-    const tempTol=4.5, altTol=2.8;
-    if(Math.abs(c.temp-temp)<=tempTol && Math.abs(c.alt-alt)<=altTol){
-      plotted.push([alt,temp]);
-      plotSVG(); renderTable(); updateProgress();
-      if(plotted.length===data.length){
-        setMsg('Great! You plotted all 22 points. Now label the atmospheric layers.','ok');
-        setTimeout(()=>goStep(2),600);
-      }else{
-        setMsg('Correct — plot the next row.','ok');
-      }
-    }else{
-      const xHint=c.temp<temp?'Move right → (warmer).':'Move left ← (colder).';
-      const yHint=c.alt<alt?'Move up ↑ (higher altitude).':'Move down ↓ (lower altitude).';
-      setMsg(`Not quite. ${xHint} ${yHint}`,'warn');
+function plotPoint(evt){
+  if(plotted.length>=DATA.length) return;
+  const c=graphCoords(evt);
+  const [alt,temp]=DATA[plotted.length];
+  const tempOK=Math.abs(c.temp-temp)<=4.5;
+  const altOK=Math.abs(c.alt-alt)<=2.8;
+
+  if(tempOK && altOK){
+    plotted.push([alt,temp]);
+    renderProfile();
+    renderTable();
+    $("plotMsg").textContent="Correct — plot the next row.";
+    $("plotMsg").className="notice ok";
+    updateProgress();
+
+    if(plotted.length===DATA.length){
+      $("plotMsg").textContent="Great! You plotted all 22 points. Now label the atmospheric layers.";
+      setTimeout(()=>goStep(2),500);
     }
-  } else if(step===3){
-    const c=graphCoords(e);
-    if(c.alt>=15 && c.alt<=35){
-      const oz=document.getElementById('ozoneMark');
-      oz.innerHTML=`<line x1="${left}" y1="${yMap(c.alt)}" x2="${right}" y2="${yMap(c.alt)}" stroke="#8b5cf6" stroke-width="4" stroke-dasharray="8 7"/>
-      <text x="${right-8}" y="${yMap(c.alt)-7}" text-anchor="end" fill="#6d28d9" font-weight="800" font-size="13">Ozone layer (general)</text>`;
-      ozonePlaced=true;
-      document.getElementById('ozoneMsg').textContent='Yes — that is within the general ozone-layer region in the stratosphere.';
-      document.getElementById('ozoneMsg').className='msg ok';
-      updateProgress();
-      setTimeout(()=>goStep(4),700);
-    }else{
-      document.getElementById('ozoneMsg').textContent='Try again. The ozone layer is concentrated in the stratosphere.';
-      document.getElementById('ozoneMsg').className='msg warn';
-    }
+  }else{
+    const h1=c.temp<temp ? "Move right → (warmer)." : "Move left ← (colder).";
+    const h2=c.alt<alt ? "Move up ↑ (higher altitude)." : "Move down ↓ (lower altitude).";
+    $("plotMsg").textContent=`Not quite. ${h1} ${h2}`;
+    $("plotMsg").className="notice warn";
   }
-});
-
-document.getElementById('undoBtn').onclick=()=>{
-  if(step!==1 || plotted.length===0) return;
-  plotted.pop(); plotSVG(); renderTable(); updateProgress(); setMsg('Last point removed.','');
-};
-
-function resetAll(){
-  plotted=[]; ozonePlaced=false; labelsCorrect=false; step=1;
-  document.getElementById('reflection').value='';
-  plotSVG(); renderTable(); updateProgress();
-  document.getElementById('ozoneMark').innerHTML='';
-  document.getElementById('layerBands').innerHTML='';
-  document.getElementById('plotPanel').classList.remove('hidden');
-  document.getElementById('labelPanel').classList.add('hidden');
-  document.getElementById('ozonePanel').classList.add('hidden');
-  document.getElementById('reviewPanel').classList.add('hidden');
-  ['p1','p2','p3','p4'].forEach((id,i)=>{const el=document.getElementById(id);el.className='pill'+(i===0?' active':'');});
-  setMsg('','');
-  buildLabels();
 }
 
-document.getElementById('resetBtn').onclick=resetAll;
-document.getElementById('startOverBtn').onclick=resetAll;
+function undoPoint(){
+  if(currentStep!==1 || plotted.length===0) return;
+  plotted.pop();
+  renderProfile();
+  renderTable();
+  updateProgress();
+}
 
-const layers = [
-  {name:'Troposphere',min:0,max:12},
-  {name:'Stratosphere',min:12,max:50},
-  {name:'Mesosphere',min:50,max:85},
-  {name:'Thermosphere',min:85,max:100}
-];
-
-function buildLabels(){
-  const bank=document.getElementById('labelBank'); bank.innerHTML='';
-  [...layers].sort(()=>Math.random()-.5).forEach(l=>{
-    const d=document.createElement('div');
-    d.className='drag'; d.draggable=true; d.textContent=l.name; d.dataset.name=l.name;
-    d.addEventListener('dragstart',ev=>ev.dataTransfer.setData('text/plain',l.name));
-    bank.appendChild(d);
+function buildLayerTask(){
+  const names=[...LAYERS].sort(()=>Math.random()-0.5);
+  $("labelBank").innerHTML="";
+  names.forEach(layer=>{
+    const d=document.createElement("div");
+    d.className="drag";
+    d.draggable=true;
+    d.textContent=layer.name;
+    d.dataset.name=layer.name;
+    d.addEventListener("dragstart", ev=>ev.dataTransfer.setData("text/plain",layer.name));
+    $("labelBank").appendChild(d);
   });
 
-  const zones=document.getElementById('zones'); zones.innerHTML='';
-  layers.forEach((l,i)=>{
-    const z=document.createElement('div'); z.className='zone'; z.dataset.answer=l.name;
-    z.innerHTML=`<div class="zoneTitle">${l.min}–${l.max} km</div>`;
-    z.addEventListener('dragover',e=>e.preventDefault());
-    z.addEventListener('drop',e=>{
+  $("zones").innerHTML="";
+  LAYERS.forEach(layer=>{
+    const z=document.createElement("div");
+    z.className="zone";
+    z.dataset.answer=layer.name;
+    z.innerHTML=`<div class="small">${layer.min}–${layer.max} km</div>`;
+    z.addEventListener("dragover",e=>e.preventDefault());
+    z.addEventListener("drop",e=>{
       e.preventDefault();
-      const name=e.dataTransfer.getData('text/plain');
-      const el=[...document.querySelectorAll('.drag')].find(x=>x.dataset.name===name);
+      const name=e.dataTransfer.getData("text/plain");
+      const el=[...document.querySelectorAll(".drag")].find(x=>x.dataset.name===name);
       if(el) z.appendChild(el);
     });
-    zones.appendChild(z);
+    $("zones").appendChild(z);
   });
 }
-buildLabels();
 
-document.getElementById('checkLabels').onclick=()=>{
+function checkLabels(){
   let ok=true;
-  document.querySelectorAll('.zone').forEach(z=>{
-    const d=z.querySelector('.drag');
-    const good=d && d.dataset.name===z.dataset.answer;
-    z.classList.toggle('goodzone',good);
+  document.querySelectorAll(".zone").forEach(z=>{
+    const item=z.querySelector(".drag");
+    const good=item && item.dataset.name===z.dataset.answer;
+    z.classList.toggle("goodzone",!!good);
     if(!good) ok=false;
   });
-  const lm=document.getElementById('labelMsg');
 
-  if(ok){
-    labelsCorrect=true;
-    lm.textContent='Correct! Now mark the ozone layer.';
-    lm.className='msg ok';
-    const lb=document.getElementById('layerBands');
-    lb.innerHTML='';
-    layers.forEach((l,i)=>{
-      const y1=yMap(l.max), y2=yMap(l.min);
-      const op=i%2===0?0.06:0.10;
-      lb.insertAdjacentHTML('beforeend', `<rect x="${left}" y="${y1}" width="${W}" height="${y2-y1}" fill="#36b9f2" opacity="${op}"/>
-      <text x="${right-8}" y="${(y1+y2)/2}" text-anchor="end" dominant-baseline="middle" class="layerText">${l.name}</text>`);
-    });
-    updateProgress();
-    setTimeout(()=>goStep(3),700);
-  } else {
-    lm.textContent='Some labels are not in the correct altitude band yet.';
-    lm.className='msg warn';
-  }
-};
-
-document.getElementById('reflection').addEventListener('input', updateProgress);
-
-document.getElementById('submitBtn').onclick = ()=>{
-  const reflection = document.getElementById('reflection').value.trim();
-  if(reflection.length < 20){
-    document.getElementById('reviewMsg').textContent = 'Please write at least 1–3 complete sentences before submitting.';
-    document.getElementById('reviewMsg').className = 'msg warn';
+  if(!ok){
+    $("labelMsg").textContent="Some labels are not in the correct altitude band yet.";
+    $("labelMsg").className="notice warn";
     return;
   }
 
-  let score = 0;
-  if(plotted.length===data.length) score += 60;
-  if(labelsCorrect) score += 20;
-  if(ozonePlaced) score += 10;
-  if(reflection.length >= 20) score += 10;
+  labelsCorrect=true;
+  $("labelMsg").textContent="Correct! Now mark the ozone layer.";
+  $("labelMsg").className="notice ok";
+  drawBands();
+  updateProgress();
+  setTimeout(()=>goStep(3),500);
+}
 
-  document.getElementById('resultName').textContent = studentName;
-  document.getElementById('resultScore').textContent = score + '%';
-  document.getElementById('c1').textContent = `${plotted.length===data.length?'✅':'❌'} ${plotted.length}/22 data points plotted`;
-  document.getElementById('c2').textContent = `${labelsCorrect?'✅':'❌'} Atmospheric layers labeled`;
-  document.getElementById('c3').textContent = `${ozonePlaced?'✅':'❌'} Ozone layer identified`;
-  document.getElementById('c4').textContent = `${reflection.length>=20?'✅':'❌'} Reflection completed`;
-  document.getElementById('resultMessage').innerHTML = score===100
-    ? '<b>Excellent work!</b> Your atmosphere temperature profile is complete.'
-    : '<b>Almost there.</b> Return to the lab and complete any missing steps.';
+function drawBands(){
+  $("bands").innerHTML=LAYERS.map((layer,i)=>{
+    const y1=yMap(layer.max), y2=yMap(layer.min);
+    const opacity=i%2===0?0.06:0.10;
+    return `<rect x="${left}" y="${y1}" width="${width}" height="${y2-y1}" fill="#36b9f2" opacity="${opacity}"/>
+    <text x="${right-8}" y="${(y1+y2)/2}" text-anchor="end" dominant-baseline="middle" class="layer">${layer.name}</text>`;
+  }).join("");
+}
 
-  document.getElementById('labArea').classList.add('hidden');
-  document.getElementById('labArea').style.display='none';
-  document.getElementById('completionScreen').classList.remove('hidden');
-  document.getElementById('completionScreen').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
-};
-
-document.getElementById('backToLabBtn').onclick = ()=>{
-  document.getElementById('completionScreen').classList.add('hidden');
-  document.getElementById('completionScreen').style.display='none';
-  document.getElementById('labArea').classList.remove('hidden');
-  document.getElementById('labArea').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
-};
+function placeOzone(evt){
+  const c=graphCoords(evt);
+  if(c.alt>=15 && c.alt<=35){
+    ozonePlaced=true;
+    $("ozoneMark").innerHTML=`<line x1="${left}" y1="${yMap(c.alt)}" x2="${right}" y2="${yMap(c.alt)}" stroke="#8b5cf6" stroke-width="4" stroke-dasharray="8 7"/>
+      <text x="${right-8}" y="${yMap(c.alt)-7}" text-anchor="end" fill="#6d28d9" font-weight="800" font-size="13">Ozone layer (general)</text>`;
+    $("ozoneMsg").textContent="Yes — that is within the general ozone-layer region in the stratosphere.";
+    $("ozoneMsg").className="notice ok";
+    updateProgress();
+    setTimeout(()=>goStep(4),500);
+  }else{
+    $("ozoneMsg").textContent="Try again. The ozone layer is concentrated in the stratosphere.";
+    $("ozoneMsg").className="notice warn";
+  }
+}
 
 function goStep(n){
-  step=n;
-  document.getElementById('plotPanel').classList.toggle('hidden',n!==1);
-  document.getElementById('labelPanel').classList.toggle('hidden',n!==2);
-  document.getElementById('ozonePanel').classList.toggle('hidden',n!==3);
-  document.getElementById('reviewPanel').classList.toggle('hidden',n!==4);
+  currentStep=n;
+  $("plotPanel").classList.toggle("hidden",n!==1);
+  $("labelPanel").classList.toggle("hidden",n!==2);
+  $("ozonePanel").classList.toggle("hidden",n!==3);
+  $("reviewPanel").classList.toggle("hidden",n!==4);
 
-  ['p1','p2','p3','p4'].forEach((id,i)=>{
-    const el=document.getElementById(id);
-    el.className='pill'+(i+1<n?' done':(i+1===n?' active':''));
+  [1,2,3,4].forEach(i=>{
+    const el=$("s"+i);
+    el.className="pill";
+    if(i<n) el.classList.add("done");
+    if(i===n) el.classList.add("active");
   });
+  renderTable();
 }
+
+function updateProgress(){
+  let pct=Math.round((plotted.length/DATA.length)*60);
+  if(labelsCorrect) pct+=20;
+  if(ozonePlaced) pct+=10;
+  if($("reflection").value.trim().length>=20) pct+=10;
+  pct=Math.min(100,pct);
+  $("progressText").textContent=`Progress: ${pct}%`;
+  $("progressFill").style.width=pct+"%";
+}
+
+function submitWork(){
+  const reflection=$("reflection").value.trim();
+  if(reflection.length<20){
+    $("reviewMsg").textContent="Please write at least 1–3 complete sentences before submitting.";
+    $("reviewMsg").className="notice warn";
+    return;
+  }
+
+  let score=0;
+  if(plotted.length===DATA.length) score+=60;
+  if(labelsCorrect) score+=20;
+  if(ozonePlaced) score+=10;
+  if(reflection.length>=20) score+=10;
+
+  $("resultName").textContent=studentName;
+  $("resultScore").textContent=score+"%";
+  $("check1").textContent=`${plotted.length===DATA.length?"✅":"❌"} ${plotted.length}/22 data points plotted`;
+  $("check2").textContent=`${labelsCorrect?"✅":"❌"} Atmospheric layers labeled`;
+  $("check3").textContent=`${ozonePlaced?"✅":"❌"} Ozone layer identified`;
+  $("check4").textContent=`${reflection.length>=20?"✅":"❌"} Reflection completed`;
+  $("resultMessage").innerHTML=score===100
+    ? "<b>Excellent work!</b> Your atmosphere temperature profile is complete."
+    : "<b>Almost there.</b> Return to the lab and complete any missing steps.";
+
+  $("mainGrid").classList.add("hidden");
+  $("resultScreen").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+function returnToLab(){
+  $("resultScreen").classList.add("hidden");
+  $("mainGrid").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+function resetLab(){
+  plotted=[];
+  currentStep=1;
+  labelsCorrect=false;
+  ozonePlaced=false;
+  $("reflection").value="";
+  $("plotMsg").textContent="";
+  $("labelMsg").textContent="";
+  $("ozoneMsg").textContent="";
+  $("reviewMsg").textContent="";
+  $("points").innerHTML="";
+  $("profileLine").setAttribute("points","");
+  $("bands").innerHTML="";
+  $("ozoneMark").innerHTML="";
+  buildLayerTask();
+  goStep(1);
+  updateProgress();
+}
+
+init();
+})();
 </script>
 </body>
 </html>
