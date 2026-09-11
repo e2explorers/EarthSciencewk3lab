@@ -88,7 +88,7 @@
     <h2>Student Information</h2>
     <div class="nameRow">
       <input id="studentName" type="text" placeholder="Enter your full name" />
-      <button class="primary" id="beginBtn">Begin Lab</button>
+      <button type="button" class="primary" id="beginBtn" onclick="beginLab()">Begin Lab</button>
     </div>
     <div class="msg" id="nameMsg"></div>
   </div>
@@ -242,19 +242,35 @@ axes.insertAdjacentHTML('beforeend', `<line x1="${left}" y1="${top}" x2="${left}
 axes.insertAdjacentHTML('beforeend', `<text x="${(left+right)/2}" y="775" text-anchor="middle" class="axisText">Temperature (°C)</text>`);
 axes.insertAdjacentHTML('beforeend', `<text x="20" y="${(top+bottom)/2}" text-anchor="middle" transform="rotate(-90 20 ${(top+bottom)/2})" class="axisText">Altitude (km)</text>`);
 
-document.getElementById('beginBtn').onclick = ()=>{
-  const v = document.getElementById('studentName').value.trim();
+function beginLab(){
+  const nameInput = document.getElementById('studentName');
+  const nameMsg = document.getElementById('nameMsg');
+  const nameCard = document.getElementById('nameCard');
+  const labArea = document.getElementById('labArea');
+
+  const v = (nameInput && nameInput.value ? nameInput.value : '').trim();
+
   if(!v){
-    document.getElementById('nameMsg').textContent = 'Please enter your name before beginning.';
-    document.getElementById('nameMsg').className = 'msg warn';
+    if(nameMsg){
+      nameMsg.textContent = 'Please enter your name before beginning.';
+      nameMsg.className = 'msg warn';
+    }
     return;
   }
+
   studentName = v;
-  document.getElementById('nameCard').classList.add('hidden');
-  document.getElementById('labArea').classList.remove('hidden');
+
+  if(nameCard) nameCard.style.display = 'none';
+  if(labArea){
+    labArea.classList.remove('hidden');
+    labArea.style.display = 'block';
+  }
+
   renderTable();
   updateProgress();
-};
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+window.beginLab = beginLab;
 
 function renderTable(){
   tbody.innerHTML='';
@@ -456,13 +472,17 @@ document.getElementById('submitBtn').onclick = ()=>{
     : '<b>Almost there.</b> Return to the lab and complete any missing steps.';
 
   document.getElementById('labArea').classList.add('hidden');
+  document.getElementById('labArea').style.display='none';
   document.getElementById('completionScreen').classList.remove('hidden');
+  document.getElementById('completionScreen').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
 };
 
 document.getElementById('backToLabBtn').onclick = ()=>{
   document.getElementById('completionScreen').classList.add('hidden');
+  document.getElementById('completionScreen').style.display='none';
   document.getElementById('labArea').classList.remove('hidden');
+  document.getElementById('labArea').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
 };
 
